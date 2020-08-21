@@ -24,7 +24,7 @@ const TEST_USER_COMPRADOR = {
 
 // mercadopago.configurations.setAccessToken(TEST_USER_VENDEDOR.accessToken);
 mercadopago.configure({
-  // sandbox: true,
+  sandbox: true,
   access_token: TEST_USER_VENDEDOR.accessToken,
   integrator_id: INTEGRATOR_ID
 });
