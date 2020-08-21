@@ -6,7 +6,7 @@ var upload = multer();
 const axios = require('axios');
 
 var mercadopago = require('mercadopago');
-
+const APP_URL = 'https://felipe-mp-ecommerce-nodejs.herokuapp.com/';
 const INTEGRATOR_ID = "dev_24c65fb163bf11ea96500242ac130004";
 const TEST_USER_VENDEDOR = {
   "collectorId": 469485398,
@@ -56,20 +56,26 @@ app.get('/checkout', function (req, res) {
 
 app.post('/procesar_pago', function (req, res) {
   var body = req.body;
-  // var payment = {
-  //   token: body.token,
-  //   installments: body.installments,
-  //   transaction_amount: body.transaction_amount,
-  //   description: body.description,
-  //   payment_method_id: body.payment_method_id,
-  //   payer: {
-  //     email: TEST_USER_COMPRADOR.email,
-  //     identification: {
-  //       number: body.docNumber,
-  //       type: body.docType
-  //     }
-  //   }
-  // };
+  var payment = {
+    "token": body.token,
+    "installments": body.installments,
+    "transaction_amount": body.transaction_amount,
+    "description": body.description,
+    "payment_method_id": body.payment_method_id,
+    "payer": {
+      "email": TEST_USER_COMPRADOR.email,
+      "identification": {
+        "number": body.docNumber,
+        "type": body.docType
+      }
+    },
+    "notification_url": `${APP_URL}notificaciones`,
+    "sponsor_id":null,
+    "binary_mode":false,
+    "external_reference": "felipeblan@gmail.com",
+    "statement_descriptor":"MercadoPago"
+  };
+  console.log(payment);
   res.send(body);
 });
 
