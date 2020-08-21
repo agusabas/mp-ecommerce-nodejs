@@ -27,7 +27,7 @@
                     <div class="row as-search-navbar" id="as-search-navbar" style="width: auto;">
                         <div class="as-accessories-filter-tile column large-6 small-3">
                             <button class="as-filter-button" aria-expanded="true" aria-controls="as-search-filters" type="button">
-                                <h2 class=" as-filter-button-text">Checkout</h2>
+                                <h2 class=" as-filter-button-text">{{ pageTitle }}</h2>
                             </button>
                         </div>
                     </div>
@@ -146,12 +146,14 @@
 
     function doPay(event){
         event.preventDefault();
-        if(!doSubmit){
-            var $form = document.querySelector('#pay');
-            console.log($form);
-            window.Mercadopago.createToken($form, sdkResponseHandler);
-            return false;
-        }
+        var form = document.querySelector('#pay');
+        console.log(form);
+        form.submit();
+        //if(!doSubmit){
+           // var $form = document.querySelector('#pay');
+           // window.Mercadopago.createToken($form, sdkResponseHandler);
+           // return false;
+       // }
     };
 
     function sdkResponseHandler(status, response) {
@@ -167,16 +169,14 @@
           //alert("Verificar que toda la información este completa.");
           alert(message);
         }else{
-          console.log(response);
           var form = document.querySelector('#pay');
           var card = document.createElement('input');
           card.setAttribute('name', 'token');
           card.setAttribute('type', 'hidden');
           card.setAttribute('value', response.id);
-          console.log(response.id);
           form.appendChild(card);
           doSubmit=true;
-          //form.submit();
+          form.submit();
           return;
         }
     };    

@@ -1,5 +1,8 @@
 var express = require('express');
 var exphbs  = require('express-handlebars');
+var bodyParser = require('body-parser');
+var multer = require('multer');
+var upload = multer();
 
 var mercadopago = require('mercadopago');
 
@@ -22,6 +25,11 @@ mercadopago.configure({
 });
 
 var app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(upload.array()); 
+
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 
@@ -35,12 +43,18 @@ app.get('/detail', function (req, res) {
 });
 
 app.get('/checkout', function (req, res) {
+  var pageTitle = 'Pagar la Compra';
   var params = {
+    pageTitle,
     ...req.query,
-    ...TEST_USER_COMPRADOR,
-    ...TEST_USER_VENDEDOR
+    publicKey: TEST_USER_VENDEDOR.publicKey
   };
   res.render('checkout', params);
+});
+
+app.post('/procesar_pago', function (req, res) {
+  var body = req.body;
+  res.send(body);
 });
 
 app.use(express.static('assets'));
@@ -50,5 +64,5 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log('app running');
-  console.log(mercadopago.payment);
+  // console.log(mercadopago.payment);
 });
