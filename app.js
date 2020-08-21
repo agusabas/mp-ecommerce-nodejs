@@ -7,7 +7,7 @@ const axios = require('axios');
 const url = require('url');
 
 var mercadopago = require('mercadopago');
-const { query } = require('express');
+
 const APP_URL = 'https://felipe-mp-ecommerce-nodejs.herokuapp.com/';
 const INTEGRATOR_ID = "dev_24c65fb163bf11ea96500242ac130004";
 const TEST_USER_VENDEDOR = {
@@ -22,10 +22,8 @@ const TEST_USER_COMPRADOR = {
   "password": "qatest2417"
 };
 
-mercadopago.configure({
-  'access_token': TEST_USER_VENDEDOR.accessToken,
-  'integrator_id': INTEGRATOR_ID
-});
+mercadopago.configurations.setAccessToken(TEST_USER_VENDEDOR.accessToken);
+mercadopago.configurations.setIntegratorId(INTEGRATOR_ID);
 
 var app = express();
 
@@ -90,11 +88,12 @@ app.post('/procesar_pago', function (req, res) {
     external_reference: 'felipeblan@gmail.com',
 
   };
-  mercadopago.configure({
-    'sandbox': true,
-    'access_token': TEST_USER_VENDEDOR.accessToken,
-    'integrator_id': INTEGRATOR_ID
-  });
+  // mercadopago.configure({
+  //   'sandbox': true,
+  //   'access_token': TEST_USER_VENDEDOR.accessToken,
+  //   'integrator_id': INTEGRATOR_ID
+  // });
+  console.log(mercadopago);
   mercadopago.payment.create({...payment}).then((response) => {
     console.log('successfull payment');
     console.log(response);
