@@ -6,6 +6,7 @@ var upload = multer();
 const axios = require('axios');
 
 var mercadopago = require('mercadopago');
+const { query } = require('express');
 const APP_URL = 'https://felipe-mp-ecommerce-nodejs.herokuapp.com/';
 const INTEGRATOR_ID = "dev_24c65fb163bf11ea96500242ac130004";
 const TEST_USER_VENDEDOR = {
@@ -76,7 +77,7 @@ app.post('/procesar_pago', function (req, res) {
     "statement_descriptor":"MercadoPago"
   };
   console.log(payment);
-  res.send(body);
+  res.send({body, payment});
 });
 
 app.get('/test', (req, res) => {
@@ -87,6 +88,32 @@ app.get('/test', (req, res) => {
   }).catch(e => {
     res.status(400).send(e);
   });
+});
+
+//Backurls view
+app.get('/back_url/:type', (req, res) => {
+  var queryParams = req.query;
+  var types = ['failure','pending', 'success'];
+  if (!types.includes(req.params.type)) {
+    res.redirect('/');
+    return;
+  }
+  // if (Object.values(queryParams).length <= 0) {
+  //   res.redirect('/');
+  //   return;
+  // }
+  var response = {
+    "pageTitle": req.params.type.toUpperCase(),
+    "collection_id": queryParams.collection_id,
+    "collection_status": queryParams.collection_id,
+    "external_reference": queryParams.external_reference,
+    "payment_type": queryParams.payment_type,
+    "preference_id": queryParams.preference_id,
+    "site_id": queryParams.site_id,
+    "processing_mode": queryParams.processing_mode,
+    "merchant_account_id": queryParams.merchant_account_id,
+  };
+  res.render('backUrl', response);
 });
 
 app.use(express.static('assets'));
