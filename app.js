@@ -96,7 +96,7 @@ app.post('/procesar_pago', function (req, res) {
           "title": body.description,
           "description": "Dispositivo móvil de Tienda e-commerce",
           "picture_url": body.img,
-          "category_id": "cellphones",
+          "category_id": "phones",
           "quantity": 1,
           "unit_price": body.transaction_amount
         }
