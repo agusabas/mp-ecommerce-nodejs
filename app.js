@@ -22,8 +22,12 @@ const TEST_USER_COMPRADOR = {
   "password": "qatest2417"
 };
 
-mercadopago.configurations.setAccessToken(TEST_USER_VENDEDOR.accessToken);
-mercadopago.configurations.setIntegratorId(INTEGRATOR_ID);
+// mercadopago.configurations.setAccessToken(TEST_USER_VENDEDOR.accessToken);
+mercadopago.configure({
+  sandbox: true,
+  access_token: TEST_USER_VENDEDOR.accessToken,
+  integrator_id: INTEGRATOR_ID
+});
 
 var app = express();
 
@@ -53,7 +57,7 @@ app.get('/checkout', function (req, res) {
   res.render('checkout', params);
 });
 
-app.post('/procesar_pago', function (req, res) {
+app.post('/procesar_pago', async (req, res, next) => {
   var body = req.body;
   if (body) {
     if (Object.hasOwnProperty.call(body,'installments') && body.installments > 6) {
@@ -93,17 +97,41 @@ app.post('/procesar_pago', function (req, res) {
   //   'access_token': TEST_USER_VENDEDOR.accessToken,
   //   'integrator_id': INTEGRATOR_ID
   // });
-  console.log(mercadopago);
-  mercadopago.payment.create({...payment}).then((response) => {
-    console.log('successfull payment');
-    console.log(response);
-    res.send({response, payment})
-  }).catch(e => {
-    console.error('failure payment');
+  let at;
+  try {
+    at = await mercadopago.getAccessToken();
+  } catch(e) {
+    console.error(e);
+  }
+
+  if (at) {
+    console.log(`Token: ${at}`);
+  }
+
+  let makePayment;
+
+  try {
+    makePayment = await mercadopago.payment(payment);
+  } catch(e) {
     console.error(e);
     res.status(400);
-    res.send({e});
-  })
+    res.send();
+    next();
+  }
+
+  if (makePayment) {
+    res.send({paymen, makePayment, at});
+  }
+  // mercadopago.payment.create({...payment}).then((response) => {
+  //   console.log('successfull payment');
+  //   console.log(response);
+  //   res.send({response, payment})
+  // }).catch(e => {
+  //   console.error('failure payment');
+  //   console.error(e);
+  //   res.status(400);
+  //   res.send({e});
+  // })
   // res.send({body, payment});
 });
 
