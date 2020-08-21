@@ -111,7 +111,7 @@ app.post('/procesar_pago', async (req, res, next) => {
   let makePayment;
 
   try {
-    makePayment = await mercadopago.payment(payment);
+    makePayment = await mercadopago.payment.create(payment);
   } catch(e) {
     console.error(e);
     res.status(400);
