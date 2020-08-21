@@ -47,7 +47,8 @@ app.get('/checkout', function (req, res) {
   var params = {
     pageTitle,
     ...req.query,
-    publicKey: TEST_USER_VENDEDOR.publicKey
+    publicKey: TEST_USER_VENDEDOR.publicKey,
+    email: TEST_USER_COMPRADOR.email
   };
   res.render('checkout', params);
 });
