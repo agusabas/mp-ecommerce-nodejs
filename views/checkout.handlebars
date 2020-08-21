@@ -173,9 +173,11 @@
           card.setAttribute('name', 'token');
           card.setAttribute('type', 'hidden');
           card.setAttribute('value', response.id);
+          console.log(response.id);
           form.appendChild(card);
           doSubmit=true;
-          form.submit();
+          //form.submit();
+          return;
         }
     };    
 </script> 
