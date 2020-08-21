@@ -24,7 +24,8 @@ const TEST_USER_COMPRADOR = {
 
 mercadopago.configure({
   sandbox: true,
-  'access_token': TEST_USER_VENDEDOR.accessToken
+  'access_token': TEST_USER_VENDEDOR.accessToken,
+  'integrator_id': INTEGRATOR_ID
 });
 
 var app = express();
@@ -71,70 +72,120 @@ app.post('/procesar_pago', function (req, res) {
       }));
     }
   }
+
   var payment = {
-    "token": body.token,
-    "installments": body.installments,
-    "transaction_amount": body.transaction_amount,
-    "description": body.description,
-    "payment_method_id": body.payment_method_id,
-    "payer": {
-      "email": TEST_USER_COMPRADOR.email,
-      "identification": {
-        "number": body.docNumber,
-        "type": body.docType
-      }
-    },
-    "notification_url": `${APP_URL}notificaciones`,
-    "sponsor_id":null,
-    "binary_mode":false,
-    "external_reference": "felipeblan@gmail.com",
-    "statement_descriptor":"MercadoPago",
-    "additional_info": {
-      "items": [
-        {
-          "id": "1234",
-          "title": body.description,
-          "description": "Dispositivo móvil de Tienda e-commerce",
-          "picture_url": body.img,
-          "category_id": "phones",
-          "quantity": 1,
-          "unit_price": body.transaction_amount
-        }
-      ],
-      "payer": {
-        name: "Lalo",
-        surname: "Landa",
-        email: TEST_USER_COMPRADOR.email,
-        phone: {
-          area_code: "11",
-          number: "22223333"
-        },
-        
-        identification: {
-          type: body.docType,
-          number: body.docNumber
-        },
-        address: {
-          street_name: "False",
-          street_number: "123",
-          zip_code: "111"
-        }
+    token: body.token,
+    description: body.description,
+    transaction_amount: body.transaction_amount,
+    payment_method_id: body.payment_method_id,
+    payer: {
+      email: TEST_USER_COMPRADOR.email,
+      identification: {
+        type: body.docType,
+        number: body.docNumber
       }
     }
   };
-  console.log(payment);
+  mercadopago.payment.create({...payment}).then((response) => {
+    res.send({response, payment})
+  }).catch(e => {
+    res.status(400);
+    res.send(e);
+  })
   res.send({body, payment});
 });
 
-app.get('/test', (req, res) => {
-  const url = `https://api.mercadopago.com/v1/payment_methods?access_token=${TEST_USER_VENDEDOR.accessToken}`;
-  axios.get(url).then(r => {
-    console.log(r);
-    res.send(r.data);
-  }).catch(e => {
-    res.status(400).send(e);
-  });
-});
+// app.post('/procesar_pago', function (req, res) {
+//   var body = req.body;
+//   if (body) {
+//     if (Object.hasOwnProperty.call(body,'installments') && body.installments > 6) {
+//       var queryParams = {
+//         img: body.img,
+//         title: body.title,
+//         price: body.price,
+//         unit: 1
+//       };
+//       res.redirect(url.format({
+//         pathname: '/checkout',
+//         query: queryParams
+//       }));
+//     }
+//   }
+//   var payment = {
+//     "token": body.token,
+//     "installments": body.installments,
+//     "transaction_amount": body.transaction_amount,
+//     "description": body.description,
+//     "payment_method_id": body.payment_method_id,
+//     "payer": {
+//       "email": TEST_USER_COMPRADOR.email,
+//       "identification": {
+//         "number": body.docNumber,
+//         "type": body.docType
+//       }
+//     },
+//     "notification_url": `${APP_URL}notificaciones`,
+//     "sponsor_id":null,
+//     "binary_mode":false,
+//     "external_reference": "felipeblan@gmail.com",
+//     "statement_descriptor":"MercadoPago",
+//     "additional_info": {
+//       "items": [
+//         {
+//           "id": "1234",
+//           "title": body.description,
+//           "description": "Dispositivo móvil de Tienda e-commerce",
+//           "picture_url": body.img,
+//           "category_id": "phones",
+//           "quantity": 1,
+//           "unit_price": body.transaction_amount
+//         }
+//       ],
+//       "payer": {
+//         name: "Lalo",
+//         surname: "Landa",
+//         email: TEST_USER_COMPRADOR.email,
+//         phone: {
+//           area_code: "11",
+//           number: "22223333"
+//         },
+        
+//         identification: {
+//           type: body.docType,
+//           number: body.docNumber
+//         },
+//         address: {
+//           street_name: "False",
+//           street_number: "123",
+//           zip_code: "111"
+//         }
+//       },
+//       "back_urls": {
+//         "success": `${APP_URL}back_url/success`,
+//         "failure": `${APP_URL}back_url/failure`,
+//         "pending": `${APP_URL}back_url/pending`
+//       },
+//       "auto_return": "approved",
+//     }
+//   };
+//   mercadopago.configure({
+//     integrator_id: INTEGRATOR_ID
+//   });
+//   res.send({body, payment});
+// });
+
+// app.get('/test', (req, res) => {
+//   const url = `https://api.mercadopago.com/v1/payment_methods?access_token=${TEST_USER_VENDEDOR.accessToken}`;
+//   const headers = {
+//     'x-integrator-id': INTEGRATOR_ID
+//   };
+//   axios.get(url, headers).then(r => {
+//     console.log(r);
+//     res.send(r.data);
+//   }).catch(e => {
+//     res.status(400).send(e);
+//   });
+// });
 
 //Backurls view
 app.get('/back_url/:type', (req, res) => {
