@@ -114,6 +114,13 @@
     function setPaymentMethod(status, response) {
         if (status == 200) {
             let paymentMethodId = response[0].id;
+            var notAllowed = ['atm', 'amex'];
+            if (notAllowed.include(paymentMethodId)) {
+              var cardNumber = document.getElementById('cardNumber');
+              cardNumber.value = '';
+              alert('No se permiten pagos con tarjetas de tipo American Express o Cajero Automático');
+              return;
+            }
             let element = document.getElementById('payment_method_id');
             element.value = paymentMethodId;
             getInstallments();

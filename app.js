@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var multer = require('multer');
 var upload = multer();
 const axios = require('axios');
+const url = require('url');
 
 var mercadopago = require('mercadopago');
 const { query } = require('express');
@@ -40,7 +41,6 @@ app.get('/', function (req, res) {
 });
 
 app.get('/detail', function (req, res) {
-    console.log(req.query);
     res.render('detail', req.query);
 });
 
@@ -57,6 +57,20 @@ app.get('/checkout', function (req, res) {
 
 app.post('/procesar_pago', function (req, res) {
   var body = req.body;
+  if (body) {
+    if (Object.hasOwnProperty.call(body,'installments') && body.installments > 6) {
+      var queryParams = {
+        img: body.img,
+        title: body.title,
+        price: body.price,
+        unit: 1
+      };
+      res.redirect(url.format({
+        pathname: '/checkout',
+        query: queryParams
+      }));
+    }
+  }
   var payment = {
     "token": body.token,
     "installments": body.installments,
@@ -74,7 +88,39 @@ app.post('/procesar_pago', function (req, res) {
     "sponsor_id":null,
     "binary_mode":false,
     "external_reference": "felipeblan@gmail.com",
-    "statement_descriptor":"MercadoPago"
+    "statement_descriptor":"MercadoPago",
+    "additional_info": {
+      "items": [
+        {
+          "id": "1234",
+          "title": body.description,
+          "description": "Dispositivo móvil de Tienda e-commerce",
+          "picture_url": body.img,
+          "category_id": "cellphones",
+          "quantity": 1,
+          "unit_price": body.transaction_amount
+        }
+      ],
+      "payer": {
+        name: "Lalo",
+        surname: "Landa",
+        email: TEST_USER_COMPRADOR.email,
+        phone: {
+          area_code: "11",
+          number: "22223333"
+        },
+        
+        identification: {
+          type: body.docType,
+          number: body.docNumber
+        },
+        address: {
+          street_name: "False",
+          street_number: "123",
+          zip_code: "111"
+        }
+      }
+    }
   };
   console.log(payment);
   res.send({body, payment});
