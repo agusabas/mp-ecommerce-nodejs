@@ -92,7 +92,7 @@ app.post('/procesar_pago', function (req, res) {
     res.status(400);
     res.send(e);
   })
-  res.send({body, payment});
+  // res.send({body, payment});
 });
 
 // app.post('/procesar_pago', function (req, res) {
