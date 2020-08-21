@@ -85,7 +85,13 @@ app.post('/procesar_pago', function (req, res) {
       }
     }
   };
+  var preferences = {
+    notification_url: `${APP_URL}notificaciones`,
+    external_reference: 'felipeblan@gmail.com',
+
+  };
   mercadopago.configure({
+    'sandbox': true,
     'access_token': TEST_USER_VENDEDOR.accessToken,
     'integrator_id': INTEGRATOR_ID
   });
