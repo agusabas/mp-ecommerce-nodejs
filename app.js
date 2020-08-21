@@ -24,7 +24,7 @@ const TEST_USER_COMPRADOR = {
 
 // mercadopago.configurations.setAccessToken(TEST_USER_VENDEDOR.accessToken);
 mercadopago.configure({
-  sandbox: true,
+  // sandbox: true,
   access_token: TEST_USER_VENDEDOR.accessToken,
   integrator_id: INTEGRATOR_ID
 });
@@ -115,7 +115,7 @@ app.post('/procesar_pago', async (req, res, next) => {
   } catch(e) {
     console.error(e);
     res.status(400);
-    res.send();
+    res.send({e});
     next();
   }
 
