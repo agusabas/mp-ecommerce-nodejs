@@ -147,13 +147,11 @@
     function doPay(event){
         event.preventDefault();
         var form = document.querySelector('#pay');
-        console.log(form);
-        form.submit();
-        //if(!doSubmit){
-           // var $form = document.querySelector('#pay');
-           // window.Mercadopago.createToken($form, sdkResponseHandler);
-           // return false;
-       // }
+        if(!doSubmit){
+          var $form = document.querySelector('#pay');
+          window.Mercadopago.createToken($form, sdkResponseHandler);
+          return false;
+        }
     };
 
     function sdkResponseHandler(status, response) {
