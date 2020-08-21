@@ -23,7 +23,6 @@ const TEST_USER_COMPRADOR = {
 };
 
 mercadopago.configure({
-  sandbox: true,
   'access_token': TEST_USER_VENDEDOR.accessToken,
   'integrator_id': INTEGRATOR_ID
 });
@@ -86,6 +85,10 @@ app.post('/procesar_pago', function (req, res) {
       }
     }
   };
+  mercadopago.configure({
+    'access_token': TEST_USER_VENDEDOR.accessToken,
+    'integrator_id': INTEGRATOR_ID
+  });
   mercadopago.payment.create({...payment}).then((response) => {
     console.log('successfull payment');
     console.log(response);
@@ -94,7 +97,7 @@ app.post('/procesar_pago', function (req, res) {
     console.error('failure payment');
     console.error(e);
     res.status(400);
-    res.send(e);
+    res.send({e});
   })
   // res.send({body, payment});
 });
