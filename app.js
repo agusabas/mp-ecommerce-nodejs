@@ -88,26 +88,61 @@ app.post('/procesar_pago', async (req, res, next) => {
     }
   };
   var preferences = {
+    items: [{
+      id: "1234",
+      title: body.description,
+      description: "Dispositivo móvil de Tienda e-commerce",
+      picture_url: body.img,
+      category_id: "phones",
+      quantity: 1,
+      unit_price: body.transaction_amount
+    }],
+    payer: {
+      name: "Lalo",
+      surname: "Landa",
+      email: TEST_USER_COMPRADOR.email,
+      phone: {
+        area_code: "11",
+        number: "22223333"
+      },
+
+      identification: {
+        type: body.docType,
+        number: body.docNumber
+      },
+      address: {
+        street_name: "False",
+        street_number: "123",
+        zip_code: "111"
+      }
+    },
     notification_url: `${APP_URL}notificaciones`,
     external_reference: 'felipeblan@gmail.com',
-
+    back_urls: {
+      success: `${APP_URL}back_url/success`,
+      failure: `${APP_URL}back_url/failure`,
+      pending: `${APP_URL}back_url/pending`
+    },
+    auto_return: "approved",
+    payment_methods: {
+      excluded_payment_methods: [{
+          id: "atm"
+        },
+        {
+          id: "amex"
+        }
+      ],
+      installments: 6
+    },
   };
-  // mercadopago.configure({
-  //   'sandbox': true,
-  //   'access_token': TEST_USER_VENDEDOR.accessToken,
-  //   'integrator_id': INTEGRATOR_ID
-  // });
-  let at;
+  
   try {
-    at = await mercadopago.getAccessToken();
+    mercadopago.preferences.create(preferences);
   } catch(e) {
+    console.error('error creating preferences');
     console.error(e);
   }
-
-  if (at) {
-    console.log(`Token: ${at}`);
-  }
-
+  
   let makePayment;
 
   try {
@@ -120,7 +155,7 @@ app.post('/procesar_pago', async (req, res, next) => {
   }
 
   if (makePayment) {
-    res.send({paymen, makePayment, at});
+    res.send({paymen, makePayment, at, preferences});
   }
   // mercadopago.payment.create({...payment}).then((response) => {
   //   console.log('successfull payment');
