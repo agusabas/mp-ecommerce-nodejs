@@ -87,8 +87,12 @@ app.post('/procesar_pago', function (req, res) {
     }
   };
   mercadopago.payment.create({...payment}).then((response) => {
+    console.log('successfull payment');
+    console.log(response);
     res.send({response, payment})
   }).catch(e => {
+    console.error('failure payment');
+    console.error(e);
     res.status(400);
     res.send(e);
   })
