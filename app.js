@@ -76,7 +76,7 @@ app.post('/procesar_pago', function (req, res) {
   var payment = {
     token: body.token,
     description: body.description,
-    transaction_amount: body.transaction_amount,
+    transaction_amount: Number(body.transaction_amount),
     payment_method_id: body.payment_method_id,
     payer: {
       email: TEST_USER_COMPRADOR.email,
