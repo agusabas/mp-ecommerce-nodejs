@@ -112,7 +112,7 @@ app.post('/procesar_pago', async (req, res, next) => {
         zip_code: "111"
       }
     },
-    notification_url: `${APP_URL}notificaciones`,
+    notification_url: `${APP_URL}notifications`,
     external_reference: 'felipeblan@gmail.com',
     back_urls: {
       success: `${APP_URL}back_url/success`,
