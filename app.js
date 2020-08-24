@@ -149,22 +149,29 @@ app.post('/procesar_pago', async (req, res, next) => {
     console.error(e);
   }
 
-  console.log(preferencesResponse);
-  
-  let makePayment;
-
-  try {
-    makePayment = await mercadopago.payment.create(payment, {access_token: TEST_USER_VENDEDOR.accessToken});
-  } catch(e) {
-    console.error(e);
-    res.status(400);
-    res.send({e});
+  // console.log(preferencesResponse);
+  if (preferencesResponse) {
+    res.send(preferencesResponse);
+    next();
+  } else {
+    res.send();
     next();
   }
+  
+  // let makePayment;
 
-  if (makePayment) {
-    res.send({paymen, makePayment, at, preferences});
-  }
+  // try {
+  //   makePayment = await mercadopago.payment.create(payment, {access_token: TEST_USER_VENDEDOR.accessToken});
+  // } catch(e) {
+  //   console.error(e);
+  //   res.status(400);
+  //   res.send({e});
+  //   next();
+  // }
+
+  // if (makePayment) {
+  //   res.send({paymen, makePayment, at, preferences});
+  // }
   // mercadopago.payment.create({...payment}).then((response) => {
   //   console.log('successfull payment');
   //   console.log(response);
