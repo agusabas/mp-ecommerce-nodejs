@@ -8,6 +8,7 @@ const url = require('url');
 const fs = require('fs');
 
 var mercadopago = require('mercadopago');
+const { reset } = require('nodemon');
 
 const APP_URL = 'https://felipe-mp-ecommerce-nodejs.herokuapp.com/';
 const API_MERCADOPAGO = "https://api.mercadopago.com/checkout";
@@ -217,10 +218,29 @@ app.get('/back_url/:type', (req, res) => {
   res.render('backUrl', response);
 });
 
-app.post('/notifications', (req, res) => {
-  let data = JSON.stringify(req.body);
-  fs.writeFileSync('notifications.json', data, 'utf8');
-  res.send(data);
+app.post('/notifications', (req, res, next) => {
+  let data = req.body;
+  fs.readFile('notifications.json', 'utf8', function(e, fileData){
+    if (e) {
+      res.status(401);
+      res.send({e});
+      next();
+    }
+    try {
+      fileData = JSON.parse(fileData);
+    } catch(e) {
+      console.error(e);
+      fileData = [];
+    }
+
+    fileData.push(data);
+    fileData = JSON.stringify(fileData);
+
+    fs.writeFileSync('notifications.json', fileData, 'utf8');
+    res.send(fileData);
+    next();
+  });
+  // res.send(data);
 });
 
 app.get('/notifications',(req, res) => {
