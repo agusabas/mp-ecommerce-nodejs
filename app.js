@@ -109,7 +109,7 @@ app.post('/procesar_pago', async (req, res, next) => {
       address: {
         street_name: "False",
         street_number: 123,
-        zip_code: "111"
+        zip_code: "1111"
       }
     },
     notification_url: `${APP_URL}notifications`,
