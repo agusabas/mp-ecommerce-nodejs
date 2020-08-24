@@ -5,6 +5,7 @@ var multer = require('multer');
 var upload = multer();
 const axios = require('axios');
 const url = require('url');
+const fs = require('fs');
 
 var mercadopago = require('mercadopago');
 
@@ -151,8 +152,13 @@ app.post('/procesar_pago', async (req, res, next) => {
 
   // console.log(preferencesResponse);
   if (preferencesResponse) {
-    res.send(preferencesResponse);
-    next();
+    try {
+      res.redirect(preferencesResponse.response.init_point);
+    } catch(e) {
+      res.status(400);
+      res.send({e});
+      next();
+    }
   } else {
     res.send();
     next();
@@ -301,6 +307,17 @@ app.get('/back_url/:type', (req, res) => {
     "merchant_account_id": queryParams.merchant_account_id,
   };
   res.render('backUrl', response);
+});
+
+app.post('/notifications', (req, res) => {
+  let data = JSON.stringify(req.body);
+  fs.writeFileSync('notifications.json', data, 'utf8');
+  res.send(data);
+});
+
+app.get('/notifications',(req, res) => {
+  let data = fs.readFileSync('notifications.json', 'utf8');
+  res.send(data);
 });
 
 app.use(express.static('assets'));
