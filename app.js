@@ -9,6 +9,7 @@ const url = require('url');
 var mercadopago = require('mercadopago');
 
 const APP_URL = 'https://felipe-mp-ecommerce-nodejs.herokuapp.com/';
+const API_MERCADOPAGO = "https://api.mercadopago.com/checkout";
 const INTEGRATOR_ID = "dev_24c65fb163bf11ea96500242ac130004";
 const TEST_USER_VENDEDOR = {
   "collectorId": 469485398,
@@ -24,7 +25,6 @@ const TEST_USER_COMPRADOR = {
 
 // mercadopago.configurations.setAccessToken(TEST_USER_VENDEDOR.accessToken);
 mercadopago.configure({
-  sandbox: true,
   access_token: TEST_USER_VENDEDOR.accessToken,
   integrator_id: INTEGRATOR_ID
 });
@@ -125,17 +125,23 @@ app.post('/procesar_pago', async (req, res, next) => {
     },
     auto_return: "approved",
     payment_methods: {
-      excluded_payment_methods: [{
-          id: "atm"
-        },
+      excluded_payment_methods: [
         {
           id: "amex"
         }
       ],
-      installments: 6
+      excluded_payment_types: [
+        {
+          id: "atm"
+        }
+      ],
+      installments: 6,
+      default_installments: 6 
     },
   };
-  
+  console.log(preferences);
+
+  let preferencesResponse;
   try {
     mercadopago.preferences.create(preferences);
   } catch(e) {
@@ -146,7 +152,7 @@ app.post('/procesar_pago', async (req, res, next) => {
   let makePayment;
 
   try {
-    makePayment = await mercadopago.payment.create(payment);
+    makePayment = await mercadopago.payment.create(payment, {access_token: TEST_USER_VENDEDOR.accessToken});
   } catch(e) {
     console.error(e);
     res.status(400);
