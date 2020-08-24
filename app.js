@@ -24,11 +24,6 @@ const TEST_USER_COMPRADOR = {
 };
 
 // mercadopago.configurations.setAccessToken(TEST_USER_VENDEDOR.accessToken);
-mercadopago.configure({
-  access_token: TEST_USER_VENDEDOR.accessToken,
-  integrator_id: INTEGRATOR_ID
-});
-
 var app = express();
 
 app.use(bodyParser.json());
@@ -141,13 +136,20 @@ app.post('/procesar_pago', async (req, res, next) => {
   };
   console.log(preferences);
 
+  mercadopago.configure({
+    access_token: TEST_USER_VENDEDOR.accessToken,
+    integrator_id: INTEGRATOR_ID
+  });
+
   let preferencesResponse;
   try {
-    mercadopago.preferences.create(preferences);
+    preferencesResponse = await mercadopago.preferences.create(preferences);
   } catch(e) {
     console.error('error creating preferences');
     console.error(e);
   }
+
+  console.log(preferencesResponse);
   
   let makePayment;
 
