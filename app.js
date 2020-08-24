@@ -135,7 +135,7 @@ app.post('/procesar_pago', async (req, res, next) => {
       default_installments: 6 
     },
   };
-  console.log(preferences);
+  // console.log(preferences);
 
   mercadopago.configure({
     access_token: TEST_USER_VENDEDOR.accessToken,
@@ -150,7 +150,7 @@ app.post('/procesar_pago', async (req, res, next) => {
     console.error(e);
   }
 
-  // console.log(preferencesResponse);
+  console.log(preferencesResponse);
   if (preferencesResponse) {
     try {
       res.redirect(preferencesResponse.response.init_point);
