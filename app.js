@@ -88,7 +88,7 @@ app.post('/procesar_pago', async (req, res, next) => {
       id: "1234",
       title: body.description,
       description: "Dispositivo móvil de Tienda e-commerce",
-      picture_url: body.img,
+      picture_url: APP_URL+body.img.slice(2,body.img.length),
       category_id: "phones",
       quantity: 1,
       unit_price: parseFloat(body.transaction_amount)
@@ -135,8 +135,8 @@ app.post('/procesar_pago', async (req, res, next) => {
       default_installments: 6 
     },
   };
-  // console.log(preferences);
-
+  console.log(preferences);
+  console.log('PREFERENCES');
   mercadopago.configure({
     access_token: TEST_USER_VENDEDOR.accessToken,
     integrator_id: INTEGRATOR_ID
