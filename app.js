@@ -90,7 +90,7 @@ app.post('/procesar_pago', async (req, res, next) => {
       picture_url: body.img,
       category_id: "phones",
       quantity: 1,
-      unit_price: body.transaction_amount
+      unit_price: parseFloat(body.transaction_amount)
     }],
     payer: {
       name: "Lalo",
@@ -98,7 +98,7 @@ app.post('/procesar_pago', async (req, res, next) => {
       email: TEST_USER_COMPRADOR.email,
       phone: {
         area_code: "11",
-        number: "22223333"
+        number: 22223333
       },
 
       identification: {
@@ -107,7 +107,7 @@ app.post('/procesar_pago', async (req, res, next) => {
       },
       address: {
         street_name: "False",
-        street_number: "123",
+        street_number: 123,
         zip_code: "111"
       }
     },
